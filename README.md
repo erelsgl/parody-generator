@@ -2,7 +2,7 @@ parody-generator
 ================
 
 "Parody generators are computer programs which generate syntactically correct, but meaningless text in the style of a particular writer"
-((Wikipedia)[https://en.wikipedia.org/wiki/Parody_generator]).
+([Wikipedia](https://en.wikipedia.org/wiki/Parody_generator)).
 
 This is a parody-generator that focuses on Hebrew texts. The parsed texts and their data files are under the "corpora" folder:
 
@@ -16,7 +16,7 @@ This is a parody-generator that focuses on Hebrew texts. The parsed texts and th
  
 **ImitatorNet** is a web-server for creating and displaying puzzles based on ImitatorProject. It depends on:
 * ImitatorProject 
-* (netty-socketio)[https://github.com/mrniko/netty-socketio].
+* [netty-socketio](https://github.com/mrniko/netty-socketio).
 The main program is ImitatorServer.
 
 CREDITS:
