@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="main.css" />
+<title>Lexical Inference Engine</title>
+
+<script src="js/socket.io/socket.io.js"></script>
+<script src="js/moment.min.js"></script>
+<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/jquery.deserialize.js"></script>
+
+<script src="LexicalEntailer.port.js"></script>
+
+<script src="js/deeplog.js"></script>
+<script src="js/utils.js"></script>
+
+<script type="text/javascript">
+	/* Eyal's Google Analytics */
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-33598263-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+<body>
+
+<script language="javascript" type="text/javascript">
+/* examples: */
+
+	function SetChecked(element_id,val) {
+		var element = document.getElementById(element_id);
+		if(element != null)
+			element.checked = val;
+	}
+	function clear_entailment_paths() {
+		$("#entailment_paths").html("");
+	}
+	function ExampleA() {
+		updateTexts('Jack and Jill go_up the hill to fetch a pail of water', 'Jill and Jack climbed a mountain to get a bucket of fluid');
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",true);
+		SetChecked("resource_CatVar",false);
+		SetChecked("resource_VerbOcean",true);
+		SetChecked("resource_DistSim",false);
+		SetChecked("resource_Wikipedia",true);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",false);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("English");
+		clear_entailment_paths();
+	}
+	function ExampleB() {
+		updateTexts("Sean_Connery parked his Buick in Hollywood_Boulevard near the Kodak_Theatre", "the actor's car is parked in Los_Angeles");
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",false);
+		SetChecked("resource_CatVar",false);
+		SetChecked("resource_VerbOcean",false);
+		SetChecked("resource_DistSim",false);
+		SetChecked("resource_Wikipedia",true);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",false);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("English");
+		clear_entailment_paths();
+	}
+	function ExampleC() {
+		updateTexts('In the Battle_of_Waterloo Napoleon was crushed by the Duke_of_Wellington','Bonaparte was defeated in an engagement with Britain');
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",false);
+		SetChecked("resource_CatVar",false);
+		SetChecked("resource_VerbOcean",true);
+		SetChecked("resource_DistSim",false);
+		SetChecked("resource_Wikipedia",true);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",false);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("English");
+		clear_entailment_paths();
+	}
+
+	function ExampleD() {
+		updateTexts('Christopher_Columbus revealed America','which explorer discovered the New_World?');
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",false);
+		SetChecked("resource_CatVar",false);
+		SetChecked("resource_VerbOcean",false);
+		SetChecked("resource_DistSim",false);
+		SetChecked("resource_Wikipedia",true);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",false);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("English");
+		clear_entailment_paths();
+	}
+
+	function ExampleE() {
+		updateTexts("The footballer kicked the ball towards the cottage", "jugador:n chuto:v pelota:n casa:n");
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",false);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_CatVar",true);
+		SetChecked("resource_VerbOcean",false);
+		SetChecked("resource_DistSim",false);
+		SetChecked("resource_Wikipedia",false);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",true);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("Spanish");
+		clear_entailment_paths();
+	}
+
+	function ExampleF() {
+		updateTexts("You use PLIS", "You utilize a terrific lexical engine");
+		$("[name=transitivity]").val(2);
+		SetChecked("resource_DIRECT",false);
+		SetChecked("resource_WordNet",true);
+		SetChecked("resource_CatVar",true);
+		SetChecked("resource_VerbOcean",false);
+		SetChecked("resource_DistSim",true);
+		SetChecked("resource_Wikipedia",false);
+		SetChecked("resource_Custom",false);
+		SetChecked("resource_Bilingual-manual",false);
+		SetChecked("resource_Bilingual-top",false);
+		$("[name=hypothesisLanguage]").val("English");
+		clear_entailment_paths();
+	}
+
+	function updateTexts(text, hypothesis) {
+		$("input[name=hypothesis]").val(hypothesis);
+		$("input[name=text]").val(text);
+	}
+
+	
+	
+	
+	/* initialization */
+
+	var socket=null, form=null, deeplog=null;
+	$(document).ready(function() {
+
+		deeplog = new DeepLog($("#deeplog"));
+		form = $('#form'); 
+		socket = commonConnect(serverport, deeplog);
+
+		socket.on('configuredResourcesArray', function(data) {
+			data.push("dummy");
+			setCheckboxesFromArray(
+					/*idOfContainingElement=*/"resource_selector", 
+					/*arrayOfOptions=*/data, 
+					/*checkedValues=*/data,   // []
+					/*nameOfInput=*/'selectedResources[]', 
+					/*attributes=*/'');
+			form.deserialize(location.search.substr(1)); // can deserialize only after resources are loaded
+
+
+			$("#resource_Bilingual-top").parent().hide();
+			$("#resource_Bilingual-manual").parent().hide();
+			$("#resource_dummy").parent().hide();
+
+			if ($("input[name=text]").val().length) 
+				entail();
+		});
+
+		socket.on('LexicalEntailmentRecord', function(record) {
+			console.log("CLIENT: got an entailment decision!");
+			var element = $("#entailment_paths");
+			element.html(
+					pathsToNiceHtml(record.paths) + 
+					"<div id='terms'>"+termsToHtml(record.terms, record.termProbabilities))+"</div>";
+			$("#inference_probability").html(Math.probabilityToPercent(record.textLevelEntailmentProbability));
+		});
+
+		socket.on('exception', function(throwableObject) {
+			replaceSandclockWithError($("#entailment_paths"));
+		});
+
+	});
+
+
+
+
+	/* bilingual resources */
+	var bilingualResources = ["Bilingual-manual", "Bilingual-top"];
+	function changeLanguage(language) {
+		if (language=='Spanish')
+			for (var i=0; i<bilingualResources.length; ++i)
+				$("#resource_"+bilingualResources[i]).attr('checked', true);
+		else 
+			for (var i=0; i<bilingualResources.length; ++i)
+				$("#resource_"+bilingualResources[i]).attr('checked', false);
+	}
+
+
+	/* Entailments */
+
+	function entail() {
+		var request = formToObject(form);
+		console.log("CLIENT: got a request to entail: "+JSON.stringify(request));
+		
+		if (!request.selectedResources) 
+			return;
+
+		var index = request.selectedResources.indexOf("dummy");
+		if (index>=0)
+			request.selectedResources.splice(index, 1);
+
+		deeplog.add(2, formatLogMessageForDeepLog({sender:"Client", message: request.text+" --> "+request.hypothesis+" ("+request.inferenceModel+")"}));
+
+		startSandclock($("#entailment_paths"));
+
+		//$("#permalink").attr('href', "PLIS.html?"+objectToUrlQueryString(request)).html('permalink');
+		// Eyal 2013-07-23: 1. remove the permalink under the sentence-level score box.
+		
+		socket.emit('entail', request);
+	}
+
+	
+</script>
+
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+		<tr style="background: url('images/headLine.jpg')	repeat-x scroll center top transparent;">
+			<td width="50%" align="left">
+				<a href='http://u.cs.biu.ac.il/~nlp'><img src="images/headLeft.jpg"	width="318"/></a> 
+				<!--<a href='index.html'><img src="images/headLeft.jpg"	width="318"/></a> -->
+			</td>
+			<td	width="50%" align="right">
+			<img src="images/headRight.jpg"	width="394"/>
+			</td>
+		</tr>
+	</table>
+
+	<img src='images/plis.jpg' />
+		<form name='form' id='form' method='get' action=''>
+
+		<table id='main_table' style="width:100%;">
+			<tr>
+				<td style="width:84%;">
+			 <table id='left_table'>
+				<col width='10%' />
+				<col width='10%' />
+				<col width='80%' />
+			<tr>
+				<td>
+					<span class='sentenceHeader'>Text</span> 
+				</td>
+			  <td class='language'>
+
+				</td>
+				<td>
+					<input class='sentence' name="text" type="text" />
+					<img src="images/help.jpg" title="Expert Mode:
+- use underscore for multi-words expressions
+- append :pos:n to a lemma to specify its part-of-speech and its WordNet sense number (the latter is optional)
+- avoid uppercasing non-names in the beginning of the sentence"/>
+				</td>
+			</tr>
+			<tr >
+			  <td style="text-align:center;">
+				 <img src="images/HeadSide.png" />
+				</td>
+				<td colspan='2'>
+					<div id='entailment_paths'>
+					
+<!-- 
+						 <div class="ContentResult">
+						 		<div class="FirstElement">
+						 			<a	target="_blank" href="?transitivity=2&amp;lemma=deserve&amp;POS=VERB&amp;sense=1">other:n:1</a>
+						 		</div>
+						 		<div class="Edge" >
+			 						<div title="HYPERNYM TOOLTIP">HYPERNYM
+			 						</div>
+			 						<div><img src="images/arrow.JPG"/>
+			 						</div>
+						 		</div>
+						 		<div class="MiddleElement">
+						 			<a target="_blank" href="?transitivity=2&amp;lemma=be&amp;POS=VERB&amp;sense=1">be:v:1</a>
+							</div>
+						 		<div class="Edge" >
+			 						<div title="HYPERNYM TOOLTIP">HYPERNYM
+			 						</div>
+			 						<div><img src="images/arrow.JPG"/>
+			 						</div>
+						 		</div>
+						 		<div class="LastElement">
+						 			<a target="_blank" href="?transitivity=2&amp;lemma=be&amp;POS=VERB&amp;sense=1">be:v:1</a>
+						 		</div>
+						 		<div class="Probability" >(Probability_Value)
+						 		</div>
+						 </div>
+						 <div style='clear:both' />
+-->
+					 </div> <!-- entailment_paths -->
+				</td>
+			</tr>
+			<tr>
+			  <td>
+				 <span class='sentenceHeader'>Hypothesis</span> 
+				</td>
+			  <td class='language'>
+					<select name='hypothesisLanguage' onchange='changeLanguage($(this).val());'>
+						<option>English</option>
+						<option>Spanish</option>
+					</select>
+				</td>
+				<td>
+				<input class='sentence' id="hypothesis" name="hypothesis" type="text" />
+				<img src="images/help.jpg" title="Expert Mode:
+- use underscore for multi-words expressions
+- append :pos:n to a lemma to specify its part-of-speech and its WordNet sense number (the latter is optional)
+- avoid uppercasing non-names in the beginning of the sentence"/>
+				</td>
+			</tr>
+			
+		</table><!-- left_table -->
+				</td>
+				<td style="width:16%;">
+					<table id='right_table' style="text-align:center;">
+						<tr><td>Choose resources:</td></tr>
+						<tr>
+							<td style="text-align:left;">
+								<div id="resource_selector" style="margin-left:20px;"></div>
+							</td>
+						</tr>
+						<tr><td><a target='_blank' href='LexicalEntailerEditor.html'>Edit resources</a></td></tr>
+
+						<tr><td>Set transitivity limit:</td></tr>
+						<tr>
+							<td>
+								<select name="transitivity">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+								</select>
+							</td>
+						</tr>
+
+						<tr><td>Choose inference model:</td></tr>
+						<tr>
+							<td>
+
+								<select name="inferenceModel">
+									<option value="hnplm">HN-PLM</option>
+									<option value="mplm" selected='selected'>M-PLM</option>
+									<!-- option value="witnesses">Backward</option -->
+								</select>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<button onClick='entail(); return false;'>
+									<img src='images/infer.png'	 />
+								</button>
+							</td>
+						</tr>
+
+					 <tr><td>inference probability:</td></tr>
+						<tr>
+							<td>
+							 <div>
+								<div style="float:left; margin-left:45px; border:solid 1px #000000; height:32px; width:40px; font-size:20px; padding-top:5px" id="inference_probability">&nbsp;</div>
+								<div style="float:left; margin-left:5px; margin-top:8px">%</div>
+							 </div>
+							</td>
+						</tr>
+						<!-- tr>
+							<td>
+								<div onclick="javascript:alert('This number depends on the length of the hypothesis. As the current system avoids any kind of normalization that is not an intrinsic part of the probabilistic model, longer hypotheses will have lower probability values. This number is comparable when considering hypothesis of roughly the same length, and when comparing various texts against the same hypothesis');">
+							 	why am I getting a low probability? 
+							 	</div>
+							</td>
+						</tr-->
+					<tr>
+						<td><a id='permalink'></a></td>						 
+					</tr>
+					</table><!-- right_table -->
+				</td>
+			</tr>
+		</table><!-- main_table -->
+		</form>
+
+		<table width="100%" style="text-align:left;">
+		 <tr>
+				<td>
+					<div class="Example" onclick="javascript:ExampleA();">
+					Example A
+					</div>
+					<div class="Example" onclick="javascript:ExampleB();">
+					Example B
+					</div>
+					<div class="Example" onclick="javascript:ExampleC();">
+					Example C
+					</div>
+					<div class="Example" onclick="javascript:ExampleD();">
+					Example D
+					</div>
+					<div class="Example" onclick="javascript:ExampleE();">
+					Example E-cross-lingual
+					</div>
+					<!-- div class="Example" onclick="javascript:ExampleF();">
+					Example F-custom resource
+					</div -->
+				</td>
+				<!-- td>
+					Contact: <a href="http://u.cs.biu.ac.il/~shey/">Eyal Shnarch</a> 
+				</td -->
+			</tr>
+			
+		</table>
+
+<div id='integrator_status_result'></div>
+
+<ul id='deeplog'></ul>
+
+<div id='credits'>
+<div id='credits_contents'>
+Relevant papers: 
+	<ul>
+	 <li><a href='http://u.cs.biu.ac.il/~shey'>Eyal Shnarch</a>, <a href='http://tora.us.fm/erelsgl'>Erel Segal-haLevi</a>, <a href='http://www.eng.biu.ac.il/goldbej'>Jacob Goldberger</a>, <a href='http://u.cs.biu.ac.il/~dagan'>Ido Dagan</a>. <a href='http://u.cs.biu.ac.il/~nlp/downloads/PLIS.html'><b>PLIS: a Probabilistic Lexical Inference System</b></a>. ACL (Demonstration), 2013.</li>
+	 <li><a href='http://u.cs.biu.ac.il/~shey'>Eyal Shnarch</a>, <a href='http://u.cs.biu.ac.il/~dagan'>Ido Dagan</a>, <a href='http://www.eng.biu.ac.il/goldbej'>Jacob Goldberger</a>. <a href='http://u.cs.biu.ac.il/~shey/publications/starSEM12.pdf'><b>A Probabilistic Lexical Model for Ranking Textual Inferences</b></a>. *SEM, 2012.</li>
+	 <li><a href='http://u.cs.biu.ac.il/~shey'>Eyal Shnarch</a>, <a href='http://www.eng.biu.ac.il/goldbej'>Jacob Goldberger</a>, <a href='http://u.cs.biu.ac.il/~dagan'>Ido Dagan</a>. <a href='http://u.cs.biu.ac.il/~shey/publications/textinfer11.pdf'><b>Towards a Probabilistic Model for Lexical Entailment</b></a>. TextInfer, 2011.</li>
+	 <li><a href='http://u.cs.biu.ac.il/~shey'>Eyal Shnarch</a>, <a href='http://www.eng.biu.ac.il/goldbej'>Jacob Goldberger</a>, <a href='http://u.cs.biu.ac.il/~dagan'>Ido Dagan</a>. <a href='http://u.cs.biu.ac.il/~shey/publications/acl11.pdf'><b>A Probabilistic Modeling Framework for Lexical Entailment</b></a>. ACL, 2011.</li>
+	</ul>
+<!-- Web design:
+<ul>
+	 <li>Back-end:<a href='http://tora.us.fm/erelsgl'>Erel Segal-haLevi</a></li>
+	 <li>Front-end: Eden Erez edenerez@walla.com </li>
+</ul> -->
+</div>
+</div>
+
+
+</body>
+</html>
+

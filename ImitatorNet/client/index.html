@@ -1,0 +1,153 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the    -->
+<!-- browser's rendering engine into               -->
+<!-- "Standards Mode". Replacing this declaration  -->
+<!-- with a "Quirks Mode" doctype may lead to some -->
+<!-- differences in layout.                        -->
+
+<html dir='rtl' lang='he'>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link type="text/css" rel="stylesheet" href="ImitatorGWT.css">
+    <title>הקובץ התשיעי</title>
+    
+		<script src="js/socket.io/socket.io.js"></script>
+		<script src="js/jquery-1.7.2.min.js"></script>
+		<script src="js/jquery.deserialize.js"></script>
+
+		<script src="Imitator.port.js"></script>
+
+  </head>
+
+  <body class='puzzles' dir='rtl' lang='he'>
+
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+
+ 	<p id='login' dir='rtl'></p>
+    <h1 dir='rtl' lang='he'>הקובץ התשיעי</h1>
+
+    <form dir='rtl' id='form'>
+  	  <select id="corpus" name="corpus">
+  	  	<option value="ShmonaKvazim">כתבי הרב קוק</option>
+  	  	<option value="Rambam">כתבי הרמב"ם</option>
+   	  	<option value="Herzl">כתבי הרצל</option>
+  	  </select>
+  	  <input type='hidden' name='numChoices' value='4' />
+      <button id='sendButton' onclick='createPuzzle(); return false;'>צור חידה חדשה</button>
+    </form>
+    
+    <div style='display:none' id='puzzles' dir='rtl' lang='he'>
+    <p>לפניך מספר קטעים. אחד מהם אמיתי והשאר מזוייפים. מהו הקטע האמיתי?</p>
+    <ol>
+    <li id='choice0'></li>
+    <li id='choice1'></li>
+    <li id='choice2'></li>
+    <li id='choice3'></li>
+    </ol>
+    </div>
+
+<div>
+	<span class='correct'><label>תשובות נכונות: </label> <span id='numCorrect' dir='rtl' lang='he'>0</span></span>
+	<span class='wrong'><label>תשובות שגויות: </label> <span id='numWrong' dir='rtl' lang='he'>0</span>
+</div>
+<div>&nbsp;</div>
+<div>
+    <span id='explainButton' dir='rtl' lang='he'> </span>
+</div>
+    
+    <div id='explanations' dir='rtl' lang='he'>
+    <ol>
+    <li id='explanation0'></li>
+    <li id='explanation1'></li>
+    <li id='explanation2'></li>
+    <li id='explanation3'></li>
+    </ol>
+    </div>
+
+	<p id='footer'>האתר נבדק על דפדפן פיירפוקס בלבד</p>
+	
+	<script language="javascript" type="text/javascript">
+
+	function commonConnect(serverport, deeplog) {
+		var server = (
+				location.protocol=='file:'? "http://localhost:"+serverport: 
+				location.protocol+"//"+location.hostname+":"+serverport);
+		//deeplog.add(1, "Connecting to "+server+"...");
+		console.info("CLIENT: connecting to "+server);
+		var socket = io.connect(server);
+
+		socket.on('connect', function() {
+			//deeplog.replace(1, "Client: Connected to server. Click to see log.");
+			console.info("CLIENT: connected to "+server);
+		});
+		socket.on('disconnect', function(data) {
+			//deeplog.add(1, "Disconnected from server.");
+			console.log("CLIENT: good bye, server!");
+		});
+		
+		return socket;
+	}
+	
+	
+	/**
+	 * @param form
+	 * @return an object whose fields are the fields of the given form.
+	 * Also converts 'any' selected-options to nulls, and handles arrays (fields whose name ends with []).
+	 */
+	function formToObject(form) {
+		  var request = {};
+		  //console.log(form.serializeArray());
+		  $.each(form.serializeArray(), function(i, field) {
+		    if (field.name.endsWith("[]")) { // field is an array:
+		      field.name = field.name.substr(0,field.name.length-2);
+		      if (!request[field.name])
+		        request[field.name] = [];
+		      request[field.name].push(field.value);
+		    } else {
+		      request[field.name] = (field.value=='any'? null: field.value);
+		    }
+		  });
+		  return request;
+	}
+
+	
+	
+	/* initialization */
+
+	var socket=null, form=null, deeplog=null;
+	$(document).ready(function() {
+
+		//deeplog = new DeepLog($("#deeplog"));
+		form = $('#form'); 
+		socket = commonConnect(serverport, deeplog);
+
+		socket.on('puzzle', function(record) {
+			console.log("CLIENT: got a puzzle!");
+			console.log(JSON.stringify(record));
+
+			$("#sendButton").text("צור חידה חדשה");
+		});
+	});
+
+
+
+	/* puzzles */
+
+	function createPuzzle() {
+		var request = formToObject(form);
+		console.log("CLIENT: got a request to create a puzzle: "+JSON.stringify(request));
+		
+		$("#sendButton").text("יוצר חידה...");
+
+		socket.emit('createPuzzle', request);
+	}
+	
+	</script>
+	
+  </body>
+</html>

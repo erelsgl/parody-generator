@@ -1,0 +1,61 @@
+# The directory where the statistics of the corpora were saved
+main.frequencies.dir = measuresutf8/parsedShmonaKvazim
+input.file.encoding = UTF8
+
+# number of random sentences to create
+# number.of.choices.per.puzzle = 5 # set at the client
+number.of.sections.per.choice = 1
+number.of.sentences.per.section = 4
+
+
+# Set to "true" to log everything to System.out. Set to "false" to log to an internal database.
+debug = false
+
+# The backup corpus name. 
+# Will be in use only id the property 'should.use.supplementary.corpus' is true
+supplementary.frequencies.dir = measuresutf8/parsedShmonaKvazim
+# It's recommended to use the backup corpus only with strong enough computer
+# (relatively to the size of the corpus)
+should.use.supplementary.corpus = false
+
+# Data for filtering the POS templates pool
+minimal.sentence.length = 8
+minimal.sentence.frequency = 1
+
+# The n-gram to consider while calculating the next word of the sentence
+n.gram.order = 3
+
+# The minimal number of examples to reduce the order of n-gram
+number.of.ngram.to.reduce.n = 10
+
+# The minimal number of examples to use the backup corpus
+number.of.ngram.to.use.sup.corpus = 10
+
+# Positions of words in the sentence that will be copied directly from real sentence.
+# The first word is 0.
+# The LAST and PRE_LAST are also supported
+# For example: 
+#	positions.to.copy.directly = 0 1 LAST PRE_LAST
+# will copy directly the first 2 words and the last 2 words of the sentence 
+positions.to.copy.directly = 1 2
+
+# POS to copy directly from real sentence
+pos.to.copy.directly = adjective adverb at-preposition conj conjunction copula def existential foreign interjection interrogative modal negation numeral participle prep preposition pronoun properName punctuation quantifier rb shel-preposition sub temp title verb wPrefix
+# not copied: noun 
+
+# The sentence creation direction
+# possible values: START_FROM_END, START_FROM_BEGINNING, START_FROM_BOTH
+sentence.creation.direction = START_FROM_BOTH
+
+# The minimal number of words in the sentence for splitting the sentence into 2 parts
+# (if the sentence.creation.direction = BOTH)
+minimal.template.size.to.split=4
+
+# The POS signs of the POS that are treated as the same word.
+# The POS signs can be configurable in order to support any tag set
+proper.noun.pos = pronoun
+proper.noun.plural.pos = pronoun
+number.pos = numeral
+date.pos = numeral
+time.pos = numeral
+language = RTL

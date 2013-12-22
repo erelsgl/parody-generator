@@ -1,0 +1,67 @@
+/** Add css rules here for your application. */
+
+body {
+	text-align: center;
+	font-size: 24px;
+}
+
+#puzzles {
+	text-align: right;
+	border: solid 1px #00f;
+	padding: 6px;
+	margin: 12px;
+	font-size: 14px;
+}
+
+#properties {
+	text-align: center;
+	border: solid 1px #0f0;
+	padding: 6px;
+	margin: 12px;
+}
+
+#properties textarea {
+	width:96%;
+	height:300px;
+	text-align:left;
+	line-height: 200%;
+	font-size: 16px;
+}
+#explanations {
+	text-align: right;
+	border: solid 1px #080;
+	padding: 6px;
+	margin: 12px;
+}
+
+#explanations textarea {
+	width:96%;
+	height:270px;
+	text-left;
+	line-height: 100%;
+	font-size: 16px;
+}
+
+h1 { font-size: 2em; font-weight: bold; text-align: center; }
+  body.puzzles h1 { color: #008; }
+  body.properties h1 { color: #080; }
+  body.explanations h1 { color: #080; }
+
+
+#footer { font-size: 10px; border-top: solid 1px #004; }
+  body.puzzles #footer { background: #eef; }
+  body.properties #footer { background: #efe; }
+
+#sendButton {
+	 margin: 6px;
+}
+
+#login {
+	position:absolute;
+	top:0px;
+	left:30px;
+	font-style:italic;
+}
+
+.correct {color:green}
+.wrong {color:red}

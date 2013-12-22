@@ -18,6 +18,11 @@ import dataStructures.ImitatorLogger;
 public class PuzzleCreator {
 	private static final Logger LOG = Logger.getLogger(PuzzleCreator.class.getName());
 	
+	String corporaFolder;
+	public PuzzleCreator(String corporaFolder) {
+		LOG.info("create ("+corporaFolder+")");
+		this.corporaFolder = corporaFolder;
+	}
 	
 	// Must be static because GAE starts several instances of the class!
 	private static Map<String,String> logs = new HashMap<String,String>(); 
@@ -26,18 +31,11 @@ public class PuzzleCreator {
 	
 	Map<String, SentenceCreator> mapCorpusNameToSentenceCreator = new HashMap<String, SentenceCreator>();
 
-
-	String CORPORA_FOLDER = "corpora";
-	public PuzzleCreator() {
-		LOG.info("create");
-	}
-
-
 	public SentenceCreator getSentenceCreator(String corpus)  {
 		String id = corpus+"-"+"sentence-creator";
 		SentenceCreator sentenceCreator = mapCorpusNameToSentenceCreator.get(id);
 		if (sentenceCreator==null) {
-			String propertiesFile = CORPORA_FOLDER+File.separator+corpus+File.separator+"SentenceCreator.properties";
+			String propertiesFile = corporaFolder+File.separator+corpus+File.separator+"SentenceCreator.properties";
 			try {
 					mapCorpusNameToSentenceCreator.put(corpus, 
 						sentenceCreator = new SentenceCreator(propertiesFile));
@@ -227,7 +225,7 @@ public class PuzzleCreator {
 	 */
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		PuzzleCreator impl = new PuzzleCreator();
+		PuzzleCreator impl = new PuzzleCreator("corpora");
 		long start = System.currentTimeMillis();
 		
 		// TODO: Currently doesn't work because of the memcache 
