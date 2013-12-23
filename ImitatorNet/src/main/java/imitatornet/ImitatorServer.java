@@ -38,11 +38,13 @@ public class ImitatorServer {
 	public static void main(String[] args) throws Exception {
 		CommonBeginner.begin(args, "Imitator");
 
-		final PuzzleCreator puzzleCreator = new PuzzleCreator(new File("../ImitatorProject/corpora").getAbsolutePath());
+		final PuzzleCreator puzzleCreator = new PuzzleCreator(new File("../corpora").getAbsolutePath());
 		final CommonSocketIOServer networkServer = new CommonSocketIOServer(args);
+		final ChoiceAndExplanation[] defaultPuzzle = puzzleCreator.createPuzzle("ShmonaKvazim", 4);
 
 		networkServer.addEventListener("createPuzzle", PuzzleRequest.class, new CommonDataListener<PuzzleRequest>(logger) {
 			@Override public void onDataSub(SocketIOClient client, PuzzleRequest request, AckRequest ackRequest) throws Throwable {
+				client.sendEvent("puzzle", defaultPuzzle);
 				ChoiceAndExplanation[] puzzle = puzzleCreator.createPuzzle(request.corpus, request.numChoices);
 				System.out.println(Arrays.asList(puzzle));
 				client.sendEvent("puzzle", puzzle);

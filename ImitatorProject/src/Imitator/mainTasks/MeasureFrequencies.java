@@ -20,21 +20,21 @@ public class MeasureFrequencies {
 
     public static Timer _timer = new Timer();
 
-    public static void run(Properties properties) {
+    public static void run(File propertiesFolder, Properties properties) {
 		_corpusName = properties.getProperty("corpus.name");
 		String inputDirName = properties.getProperty("input.directory"); // parsed corpus
-		File inputDir = new File(inputDirName);
+		File inputDir = new File(propertiesFolder, inputDirName);
 		if (!inputDir.isDirectory()) {
 		    System.err.println(" ## the corpus path "+inputDirName+" is not a valid directory !!");
 		    return;
 		}
 		
 		String outputDirName = properties.getProperty("output.directory"); // parsed corpus measures
-		File outputDir = new File(outputDirName);
+		File outputDir = new File(propertiesFolder, outputDirName);
 		if (!outputDir.exists())
 			outputDir.mkdirs();
 	
-		initProperties(properties, outputDirName);
+		initProperties(properties, outputDir.getAbsolutePath());
 		
 		/***************************************/
 		/**** Measure frequencies of corpus ****/
@@ -208,14 +208,16 @@ public class MeasureFrequencies {
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-    	String props = "corpora/Rambam/MeasureFrequencies.properties";
-//    	String props = "corpora/ShmonaKvazim/MeasureFrequencies.properties";
-//    	String props = "corpora/Herzl/MeasureFrequencies.properties";
+//    	String propertiesFileName = "../corpora/Rambam/MeasureFrequencies.properties";
+//    	String propertiesFileName = "../corpora/ShmonaKvazim/MeasureFrequencies.properties";
+    	String propertiesFileName = "../corpora/Herzl/MeasureFrequencies.properties";
+    	
+    	File propertiesFile = new File(propertiesFileName);
+    	File propertiesFolder = propertiesFile.getParentFile();
 
 		// Read properties file.
 		Properties properties = new Properties();
-		properties.clear();
-		properties.load(new FileInputStream(props));
-		run(properties);
+		properties.load(new FileInputStream(propertiesFile));
+		run(propertiesFolder, properties);
     }
 }

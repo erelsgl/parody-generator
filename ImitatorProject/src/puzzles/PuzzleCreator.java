@@ -225,7 +225,7 @@ public class PuzzleCreator {
 	 */
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		PuzzleCreator impl = new PuzzleCreator("corpora");
+		PuzzleCreator impl = new PuzzleCreator("../corpora");
 		long start = System.currentTimeMillis();
 		
 		// TODO: Currently doesn't work because of the memcache 

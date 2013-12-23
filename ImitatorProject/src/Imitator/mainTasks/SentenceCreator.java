@@ -1,5 +1,6 @@
 package Imitator.mainTasks;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -103,9 +104,11 @@ public class SentenceCreator {
 		initPrinter();
     }
     
-    public void initialize(Properties properties) throws IOException {
+    public void initialize(File propertiesFolder, Properties properties) throws IOException {
     	initialize_static(properties);
-    	setMainFrequenciesDir(properties.getProperty("main.frequencies.dir"));
+    	this.corpusDir = new File(propertiesFolder, 
+    			properties.getProperty("main.frequencies.dir")).getAbsolutePath();
+
 		// If there use of the supplementary corpus - initialize its location
 		// TODO check these lines
     	boolean shouldUseSupplementaryCorpus = Boolean.parseBoolean(properties.getProperty("should.use.supplementary.corpus"));
@@ -140,10 +143,10 @@ public class SentenceCreator {
 		readStatistics();
     }
     
-    public void run(Properties properties) throws IOException {
+    public void run(File propertiesFolder, Properties properties) throws IOException {
 		_timer.startClock();
 
-		initialize(properties);
+		initialize(propertiesFolder, properties);
 		//System.exit(1);
 		
 		/*************************************/
@@ -197,15 +200,6 @@ public class SentenceCreator {
 			_printer = new HebrewSentencePrinter();
 	}
     
-    private void setMainFrequenciesDir(String frequenciesPath) {
-		int lastDirectoryIndex = frequenciesPath.lastIndexOf("\\"); // windows
-		if (lastDirectoryIndex<0)
-			lastDirectoryIndex = frequenciesPath.lastIndexOf("/");  // linux
-		this.corpusDir = frequenciesPath;
-		//CreatorProps.setMainCorpusName(corpusName);
-		//CreatorProps.setBaseDir(frequenciesPath);
-    }
-
     private static String memory() {
     	final int unit = 1000000; // MB
     	long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -656,15 +650,17 @@ public class SentenceCreator {
     public SentenceCreator(String propertiesFileName) throws FileNotFoundException, IOException {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFileName));
-		initialize(properties);
+		File propertiesFile = new File(propertiesFileName);
+		File propertiesFolder = propertiesFile.getParentFile();
+		initialize(propertiesFolder, properties);
     }
     
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-    	String propertiesFile = "corpora/Rambam/SentenceCreator.properties";
-//    	String propertiesFile = "corpora/Herzl/SentenceCreator.properties";
-//    	String propertiesFile = "corpora/ShmonaKvazim/SentenceCreator.properties";
-
-		new SentenceCreator(propertiesFile).createRandomSection(1, true);
-    }
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+	    	String propertiesFileName = "../corpora/Rambam/SentenceCreator.properties";
+//		String propertiesFileName = "../corpora/Herzl/SentenceCreator.properties";
+//	    	String propertiesFileName = "../corpora/ShmonaKvazim/SentenceCreator.properties";
+	
+		new SentenceCreator(propertiesFileName).createRandomSection(1, true);
+	}
 }

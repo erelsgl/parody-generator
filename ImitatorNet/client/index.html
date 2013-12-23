@@ -9,6 +9,8 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link type="text/css" rel="stylesheet" href="ImitatorGWT.css">
+    <link type="text/css" rel="stylesheet" href="clean.css">
+    
     <title>הקובץ התשיעי</title>
     
 		<script src="js/socket.io/socket.io.js"></script>
@@ -57,10 +59,10 @@
 </div>
 <div>&nbsp;</div>
 <div>
-    <span id='explainButton' dir='rtl' lang='he'> </span>
+    <button id='explainButton' dir='rtl' lang='he' onclick='$("#explanations").toggle()'>הראה הסברים</button>
 </div>
     
-    <div id='explanations' dir='rtl' lang='he'>
+    <div id='explanations' style='display:none' dir='rtl' lang='he'>
     <ol>
     <li id='explanation0'></li>
     <li id='explanation1'></li>
@@ -93,7 +95,19 @@
 		return socket;
 	}
 	
-	
+
+	/**
+	 * @see http://stackoverflow.com/a/647272/827927
+	 */
+	function getQueryString() {
+		  var result = {}, queryString = location.search.substring(1),
+		      re = /([^&=]+)=([^&]*)/g, m;
+		  while (m = re.exec(queryString)) {
+		    result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		  }
+		  return result;
+	}
+
 	/**
 	 * @param form
 	 * @return an object whose fields are the fields of the given form.
@@ -101,7 +115,6 @@
 	 */
 	function formToObject(form) {
 		  var request = {};
-		  //console.log(form.serializeArray());
 		  $.each(form.serializeArray(), function(i, field) {
 		    if (field.name.endsWith("[]")) { // field is an array:
 		      field.name = field.name.substr(0,field.name.length-2);
@@ -120,21 +133,22 @@
 	/* initialization */
 
 	var socket=null, form=null, deeplog=null;
+	var replies = [];
 	$(document).ready(function() {
+		if (getQueryString()["explain"])
+			$("#explainButton").show();
+		else
+			$("#explainButton").hide();
+		
+		$("#sendButton").text("צור חידה חדשה");
+		$("#sendButton").prop('disabled', false);
 
 		//deeplog = new DeepLog($("#deeplog"));
 		form = $('#form'); 
 		socket = commonConnect(serverport, deeplog);
 
-		socket.on('puzzle', function(record) {
-			console.log("CLIENT: got a puzzle!");
-			console.log(JSON.stringify(record));
-
-			$("#sendButton").text("צור חידה חדשה");
-		});
+		socket.on('puzzle', onPuzzle) 
 	});
-
-
 
 	/* puzzles */
 
@@ -143,9 +157,51 @@
 		console.log("CLIENT: got a request to create a puzzle: "+JSON.stringify(request));
 		
 		$("#sendButton").text("יוצר חידה...");
+		$("#sendButton").prop('disabled', true);
 
 		socket.emit('createPuzzle', request);
 	}
+	
+	function onPuzzle(result) {
+			console.log("CLIENT: got a puzzle!");
+
+			for (var iChoice=0; iChoice<result.length; ++iChoice) {
+				var choice = $("#choice"+iChoice);
+				var explanation = $("#explanation"+iChoice);
+				if (choice) {
+					//console.log(JSON.stringify(result[iChoice]));
+					choice.html(result[iChoice].choice);
+					choice.attr("class", "");
+					//replies[iChoice] = result[iChoice].reply;
+					choice.attr("reply", result[iChoice].reply);
+					choice.click(function() {
+						var reply = this.attr("reply");
+						markChoiceAsCorrectOrWrong(this, /נכון/.test(reply));
+						alert(iChoice+": "+reply);
+						//choicesRegistrations[iChoiceFinal].removeHandler();
+						//choicesRegistrations[iChoiceFinal] = null;
+					});
+				} 
+				if (explanation)
+					explanation.html(result[iChoice].explanation.replace(/[.] /, ".<br/>"));
+			}
+			
+			$("#puzzles").show();
+			
+			$("#sendButton").text("צור חידה חדשה");
+			$("#sendButton").prop('disabled', false);
+	}
+	
+	function markChoiceAsCorrectOrWrong(choiceLabel, isCorrect) {
+		if (isCorrect) {
+			//setNumCorrect(numCorrect+1);
+			choiceLabel.attr("class", "correct");
+		} else {
+			//setNumWrong(numWrong+1);
+			choiceLabel.attr("class", "wrong");
+		}
+	}
+	
 	
 	</script>
 	
