@@ -175,9 +175,10 @@
 					//replies[iChoice] = result[iChoice].reply;
 					choice.attr("reply", result[iChoice].reply);
 					choice.click(function() {
-						var reply = this.attr("reply");
-						markChoiceAsCorrectOrWrong(this, /נכון/.test(reply));
-						alert(iChoice+": "+reply);
+						var choiceElement = $(this);
+						var reply = choiceElement.attr("reply");
+						markChoiceAsCorrectOrWrong(choiceElement, /נכון/.test(reply));
+						alert(reply);
 						//choicesRegistrations[iChoiceFinal].removeHandler();
 						//choicesRegistrations[iChoiceFinal] = null;
 					});

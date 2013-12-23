@@ -2,6 +2,7 @@ package imitatornet;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import puzzles.ChoiceAndExplanation;
 import puzzles.PuzzleCreator;
@@ -40,14 +41,22 @@ public class ImitatorServer {
 
 		final PuzzleCreator puzzleCreator = new PuzzleCreator(new File("../corpora").getAbsolutePath());
 		final CommonSocketIOServer networkServer = new CommonSocketIOServer(args);
-		final ChoiceAndExplanation[] defaultPuzzle = puzzleCreator.createPuzzle("ShmonaKvazim", 4);
+		
+		final Map<String, ChoiceAndExplanation[]> mapCorpusToDefaultPuzzle = new ConcurrentHashMap<String, ChoiceAndExplanation[]>();
 
 		networkServer.addEventListener("createPuzzle", PuzzleRequest.class, new CommonDataListener<PuzzleRequest>(logger) {
 			@Override public void onDataSub(SocketIOClient client, PuzzleRequest request, AckRequest ackRequest) throws Throwable {
-				client.sendEvent("puzzle", defaultPuzzle);
-				ChoiceAndExplanation[] puzzle = puzzleCreator.createPuzzle(request.corpus, request.numChoices);
-				System.out.println(Arrays.asList(puzzle));
-				client.sendEvent("puzzle", puzzle);
+				ChoiceAndExplanation[] defaultPuzzle = mapCorpusToDefaultPuzzle.get(request.corpus);
+				if (defaultPuzzle==null) {
+					ChoiceAndExplanation[] puzzle = puzzleCreator.createPuzzle(request.corpus, request.numChoices);
+					client.sendEvent("puzzle", puzzle);
+				} else {
+					client.sendEvent("puzzle", defaultPuzzle);
+				}
+				
+				// create a new default puzzle
+				ChoiceAndExplanation[] newPuzzle = puzzleCreator.createPuzzle(request.corpus, request.numChoices);
+				mapCorpusToDefaultPuzzle.put(request.corpus, newPuzzle);
 			}
 		});
 		networkServer.start();
