@@ -179,8 +179,7 @@
 						var reply = choiceElement.attr("reply");
 						markChoiceAsCorrectOrWrong(choiceElement, /נכון/.test(reply));
 						alert(reply);
-						//choicesRegistrations[iChoiceFinal].removeHandler();
-						//choicesRegistrations[iChoiceFinal] = null;
+						choiceElement.unbind("click");
 					});
 				} 
 				if (explanation)
@@ -193,13 +192,17 @@
 			$("#sendButton").prop('disabled', false);
 	}
 	
+	function increment(element) {
+		element.text(parseInt(element.text())+1);
+	}
+	
 	function markChoiceAsCorrectOrWrong(choiceLabel, isCorrect) {
 		if (isCorrect) {
-			//setNumCorrect(numCorrect+1);
 			choiceLabel.attr("class", "correct");
+			increment($("#numCorrect"));
 		} else {
-			//setNumWrong(numWrong+1);
 			choiceLabel.attr("class", "wrong");
+			increment($("#numWrong"));
 		}
 	}
 	
