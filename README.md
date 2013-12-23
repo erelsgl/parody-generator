@@ -22,6 +22,8 @@ The **corpora** folder contains the parsed texts and their data files:
 
 The main server program is ImitatorServer, and the client entry point is client/index.html .
 
+A working website can be found here: [http://imitatorgwt.appspot.com](http://imitatorgwt.appspot.com)
+
 CREDITS:
 * Scientific supervision: Prof. Moshe Koppel.
 * M.Sc. thesis: Roni (Aharon) Vered (2007-2009).
