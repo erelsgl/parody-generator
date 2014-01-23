@@ -1,10 +1,10 @@
 parody-generator
 ================
 
-"Parody generators are computer programs which generate syntactically correct, but meaningless text in the style of a particular writer"
-([Wikipedia](https://en.wikipedia.org/wiki/Parody_generator)).
+This program generates random Hebrew sentences based on a Hebrew text. It was developed as an understanding test, to let people test whether they understand classic Hebrew texts. [The rationale behind the project is explained here](http://woland.ph.biu.ac.il/?page_id=154).
 
-This is a parody-generator that focuses on Hebrew texts. It was developed as an understanding test, to let people test whether they understand classic Hebrew texts. The rationale behind the project is explained [here](http://woland.ph.biu.ac.il/?page_id=154).
+The name "parody generator" is from [Wikipedia](https://en.wikipedia.org/wiki/Parody_generator):
+"Parody generators are computer programs which generate syntactically correct, but meaningless text in the style of a particular writer".
 
 The **corpora** folder contains the parsed texts and their data files:
 * ShmonaKvazim - "Eight Files", by Rav Avraham Itzhak Hacohen Kook
