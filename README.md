@@ -31,8 +31,21 @@ Install Java 1.7.
 Install Maven.
 
     git clone https://github.com/erelsgl/parody-generator.git
-    cd parody-generator
+
+### Install ImitatorProject
+    cd parody-generator/ImitatorProject
     mvn install
+
+Make sure it is installed correctly:
+    java -cp target/ImitatorProject-0.0.1-SNAPSHOT.jar puzzles.PuzzleCreator
+
+### Install ImitatorNet
+    cd parody-generator/ImitatorNet
+    mvn install
+
+Start the server:
+    java -cp target/ImitatorNet-0.0.1-SNAPSHOT.jar imitatornet.ImitatorServer
+
 
 ## Demo
 
