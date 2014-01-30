@@ -6,6 +6,8 @@ This program generates random Hebrew sentences based on a Hebrew text. It was de
 The name "parody generator" is from [Wikipedia](https://en.wikipedia.org/wiki/Parody_generator):
 "Parody generators are computer programs which generate syntactically correct, but meaningless text in the style of a particular writer".
 
+## Folders
+
 The **corpora** folder contains the parsed texts and their data files:
 * ShmonaKvazim - "Eight Files", by Rav Avraham Itzhak Hacohen Kook
 * Rambam - "Mishne Tora", by Rav Moshe Ben Maimon
@@ -22,9 +24,22 @@ The **corpora** folder contains the parsed texts and their data files:
 
 The main server program is ImitatorServer, and the client entry point is client/index.html .
 
+## Installation
+
+Install Java 1.7.
+
+Install Maven.
+
+    git clone https://github.com/erelsgl/parody-generator.git
+    cd parody-generator
+    mvn install
+
+## Demo
+
 A working website can be found here: [http://imitatorgwt.appspot.com](http://imitatorgwt.appspot.com)
 
-CREDITS:
+## Credits
+
 * Scientific supervision: Prof. Moshe Koppel.
 * M.Sc. thesis: Roni (Aharon) Vered (2007-2009).
 * Desktop application programming ("Imitator"): Vladimir Torgovitzki and Yuri Yeverbaum (2010).
