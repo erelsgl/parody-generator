@@ -44,9 +44,16 @@ Make sure it is installed correctly:
     mvn install
 
 Start the server:
-    mvn exec:java -Dexec.mainClass=imitatornet.ImitatorServer -Dexec.args="localhost 9001 client"
+    mvn exec:java -Dexec.mainClass=imitatornet.ImitatorServer -Dexec.args="[host-name] [port-number] client"
 
-(9001 is the port number; you can select any other open port).
+Where:
+
+* [host-name] is the name of the host you want to use to access the web-app. This can be "localhost" if you want to use the webapp locally, or e.g. "mydomain.com" if you want to use it remotely.
+* [port-number] is a number of an unused port on your machine.
+
+Then, in a browser, open the file: **client/index.html**
+
+Look at the web console and make sure it connects to the server (it should say: "CLIENT: connecting to..." and then "CLIENT: connected to...").
 
 
 ## Demo
