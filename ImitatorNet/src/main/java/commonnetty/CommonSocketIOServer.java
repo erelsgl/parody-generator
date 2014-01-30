@@ -27,12 +27,15 @@ public class CommonSocketIOServer extends SocketIOServer {
 		return config;
 	}
 
+	private Configuration config;
+
 	public CommonSocketIOServer(String[] args) {
 		this(configurationFromCommandLineArgs(args));
 	}
 
 	public CommonSocketIOServer(Configuration configuration) {
 		super(configuration);
+		config=configuration;
 
 		// Kill all threads related to this client
 		this.addEventListener("abort", Void.class, new DataListener<Void>() {
