@@ -37,14 +37,16 @@ Install Maven.
     mvn install
 
 Make sure it is installed correctly:
-    java -cp target/ImitatorProject-0.0.1-SNAPSHOT.jar puzzles.PuzzleCreator
+    mvn exec:java -Dexec.mainClass=puzzles.PuzzleCreator
 
 ### Install ImitatorNet
     cd parody-generator/ImitatorNet
     mvn install
 
 Start the server:
-    java -cp target/ImitatorNet-0.0.1-SNAPSHOT.jar imitatornet.ImitatorServer
+    mvn exec:java -Dexec.mainClass=imitatornet.ImitatorServer -Dexec.args="localhost 9001 client"
+
+(9001 is the port number; you can select any other open port).
 
 
 ## Demo
