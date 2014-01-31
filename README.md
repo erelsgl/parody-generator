@@ -44,10 +44,12 @@ Make sure it is installed correctly:
     mvn install
 
 Start the server:
+    export MAVEN_OPTS="-Xmx2G"
     nohup mvn exec:java -Dexec.mainClass=imitatornet.ImitatorServer -Dexec.args="[host-name] [port-number] client" &
 
 Where:
 
+* -Xmx2G means to allocate 2 GB to the program. You may change this value according to your system and to your experience.
 * nohup is a Unix command whose goal is to keep the server up even when you log out. Ignore this command if you are on Windows.
 * [host-name] is the name of the host you want to use to access the web-app. This can be "localhost" if you want to use the webapp locally, or e.g. "mydomain.com" if you want to use it remotely.
 * [port-number] is a number of an unused port on your machine.

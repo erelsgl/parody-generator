@@ -49,7 +49,7 @@
 
 <div>
 	<span class='correct'><label>תשובות נכונות: </label> <span id='numCorrect' dir='rtl' lang='he'>0</span></span>
-	<span class='wrong'><label>תשובות שגויות: </label> <span id='numWrong' dir='rtl' lang='he'>0</span>
+	<span class='wrong'><label>תשובות שגויות: </label> <span id='numWrong' dir='rtl' lang='he'>0</span></span>
 </div>
 <div>&nbsp;</div>
 <div>
@@ -67,7 +67,7 @@
 
 	<p id='footer'>האתר נבדק על דפדפן פיירפוקס בלבד</p>
 	
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 
 	function commonConnect(serverport, deeplog) {
 		var server = (
@@ -101,6 +101,10 @@
 		  }
 		  return result;
 	}
+
+	String.prototype.endsWith = function(suffix) {
+	    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+	};
 
 	/**
 	 * @param form
