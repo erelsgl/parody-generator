@@ -1,5 +1,5 @@
 MEMORY=800M
-HOST=162.243.116.217
+HOST=`hostname -I`
 PORT=9002
 export MAVEN_OPTS="-Xmx$MEMORY"
 cd `dirname $0`
