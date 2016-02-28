@@ -54,7 +54,7 @@ Look at the web console and make sure it connects to the server (it should say: 
 
 ## Demo
 
-A working website can be found here: [http://imitatorgwt.appspot.com](http://imitatorgwt.appspot.com)
+A working website should be found here: [http://imitatorgwt.appspot.com](http://imitatorgwt.appspot.com) or here: [http://tora.us.fm/imitator](http://tora.us.fm/imitator).
 
 ## Credits
 
